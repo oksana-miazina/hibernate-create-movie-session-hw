@@ -54,9 +54,11 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
     @Override
     public List<MovieSession> findAvailableSessions(Long movieId, LocalDate date) {
         try (Session session = sessionFactory.openSession()) {
-            Query<MovieSession> query = session.createQuery("FROM MovieSession m "
-                    + "WHERE m.showTime >= :dateTimeFrom "
-                    + "AND m.showTime <= :dateTimeTo", MovieSession.class);
+            Query<MovieSession> query = session.createQuery("FROM MovieSession ms "
+                    + "WHERE ms.movie.id = :movieId "
+                    + "AND ms.showTime >= :dateTimeFrom "
+                    + "AND ms.showTime <= :dateTimeTo", MovieSession.class);
+            query.setParameter("movieId", movieId);
             query.setParameter("dateTimeFrom", LocalDateTime.of(date, LocalTime.MIN));
             query.setParameter("dateTimeTo", LocalDateTime.of(date, LocalTime.MAX));
             return query.getResultList();

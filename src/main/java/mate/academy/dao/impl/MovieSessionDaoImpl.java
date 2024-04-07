@@ -45,7 +45,6 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
     public Optional<MovieSession> get(Long id) {
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(session.get(MovieSession.class, id));
-
         } catch (Exception e) {
             throw new DataProcessingException("Can't get a movie session with id " + id, e);
         }
@@ -56,8 +55,8 @@ public class MovieSessionDaoImpl implements MovieSessionDao {
         try (Session session = sessionFactory.openSession()) {
             Query<MovieSession> query = session.createQuery("FROM MovieSession ms "
                     + "WHERE ms.movie.id = :movieId "
-                    + "AND ms.showTime >= :dateTimeFrom "
-                    + "AND ms.showTime <= :dateTimeTo", MovieSession.class);
+                    + "AND ms.showTime BETWEEN :dateTimeFrom AND :dateTimeTo",
+                    MovieSession.class);
             query.setParameter("movieId", movieId);
             query.setParameter("dateTimeFrom", LocalDateTime.of(date, LocalTime.MIN));
             query.setParameter("dateTimeTo", LocalDateTime.of(date, LocalTime.MAX));
